@@ -37,10 +37,10 @@ router.get("/attendance", protect, adminOnly, getAllAttendance);
 router.get("/feedbacks",  protect, adminOnly, getFeedbacks);
 
 
-router.get("/schedules",  protect, adminOnly, getSchedules);
-router.post("/schedule",  protect, adminOnly, createSchedule);
-router.put("/schedule/:id", protect, adminOnly, updateSchedule);
-router.delete("/schedule/:id", protect, adminOnly, deleteSchedule);
+router.get("/schedules",      protect, adminOnly, getSchedules);
+router.post("/schedules",     protect, adminOnly, createSchedule);
+router.put("/schedules/:id",  protect, adminOnly, updateSchedule);
+router.delete("/schedules/:id", protect, adminOnly, deleteSchedule);
 
 router.get("/tickets",       protect, adminOnly, getAllTickets);
 router.patch("/tickets/:id", protect, adminOnly, updateTicketStatus);
