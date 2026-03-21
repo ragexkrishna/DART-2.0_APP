@@ -28,20 +28,22 @@ export default function AttendanceOverview() {
       .finally(() => setLoading(false));
   }, []);
 
+  const TOTAL_DAYS = 7; // Fixed event duration, matches student dashboard logic
+
   // Compute per-student stats
   const stats = useMemo(() => {
-    // Group records by student_id
-    const byStudent = {};
+    // Count only "present" records per student_id
+    const presentCount = {};
     records.forEach((r) => {
-      if (!byStudent[r.student_id]) byStudent[r.student_id] = { present: 0, total: 0 };
-      byStudent[r.student_id].total += 1;
-      if (r.status === "present") byStudent[r.student_id].present += 1;
+      if (r.status === "present") {
+        presentCount[r.student_id] = (presentCount[r.student_id] || 0) + 1;
+      }
     });
 
     return students.map((s) => {
-      const entry  = byStudent[s.id] || { present: 0, total: 0 };
-      const pct    = entry.total > 0 ? Math.round((entry.present / entry.total) * 100) : 0;
-      return { ...s, present: entry.present, total: entry.total, pct };
+      const present = presentCount[s.id] || 0;
+      const pct     = Math.round((present / TOTAL_DAYS) * 100);
+      return { ...s, present, pct };
     });
   }, [students, records]);
 
@@ -230,7 +232,7 @@ export default function AttendanceOverview() {
                     {/* Days */}
                     <td className="py-3 px-5 text-center">
                       <span className={`text-xs font-bold font-mono ${pctColor(s.pct)}`}>
-                        {s.present}<span className="text-[#475569] font-normal">/{s.total || "—"}</span>
+                        {s.present}<span className="text-[#475569] font-normal">/7</span>
                       </span>
                     </td>
 
@@ -244,7 +246,7 @@ export default function AttendanceOverview() {
                           />
                         </div>
                         <span className={`text-xs font-extrabold font-mono px-2 py-0.5 rounded-md ${badgeStyle(s.pct)}`}>
-                          {s.total > 0 ? `${s.pct}%` : "N/A"}
+                          {s.pct}%
                         </span>
                       </div>
                     </td>
